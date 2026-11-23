@@ -1,0 +1,43 @@
+# Host networking keeps Postgres and the app on localhost. That is reliable
+# in nested Docker, where the bridge often drops container-to-container traffic.
+services:
+  postgres:
+    image: postgres:16-alpine
+    network_mode: host
+    environment:
+      POSTGRES_USER: fathom
+      POSTGRES_PASSWORD: fathom
+      POSTGRES_DB: fathom
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fathom -d fathom"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  app:
+    build: .
+    network_mode: host
+    environment:
+      DATABASE_URL: postgresql://fathom:fathom@127.0.0.1:5432/fathom
+      ETH_RPC_URL: ${ETH_RPC_URL:-https://ethereum-rpc.publicnode.com}
+      ARBITRUM_RPC_URL: ${ARBITRUM_RPC_URL:-https://arbitrum-one-rpc.publicnode.com}
+      BASE_RPC_URL: ${BASE_RPC_URL:-https://base-rpc.publicnode.com}
+      ETHERSCAN_API_KEY: ${ETHERSCAN_API_KEY:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      INDEX_BLOCK_RANGE: ${INDEX_BLOCK_RANGE:-80}
+      INDEX_MAX_LOGS: ${INDEX_MAX_LOGS:-100}
+      INDEX_CHUNK_SIZE: ${INDEX_CHUNK_SIZE:-15}
+      HEIMDALL_BIN: /usr/local/bin/heimdall
+      PORT: "43123"
+      HOSTNAME: 0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ponder-gen:/app/generated
+
+volumes:
+  pgdata:
+  ponder-gen:

@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  --background: #10140f;
+  --foreground: #efe8d6;
+  --muted: #a7ad9c;
+  --line: #2c3428;
+  --surface: #171d15;
+  --surface-2: #222a1e;
+  --signal: #dff56a;
+  --signal-ink: #17200a;
+  --verified: #9be7b4;
+  --recovered: #f0c56a;
+  --guessed: #a3aa9a;
+  --alert: #ff7d5c;
+  --danger: #ffb4a8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-signal: var(--signal);
+  --color-signal-ink: var(--signal-ink);
+  --color-verified: var(--verified);
+  --color-recovered: var(--recovered);
+  --color-guessed: var(--guessed);
+  --color-alert: var(--alert);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, monospace;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+}
+
+body {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse at top, rgba(223, 245, 106, 0.08), transparent 42%),
+    repeating-linear-gradient(to bottom, transparent, transparent 27px, rgba(239, 232, 214, 0.035) 28px);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
