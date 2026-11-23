@@ -1,4 +1,6 @@
 import { claimQueued, listReady, resumeInterrupted } from "@/lib/db";
+import { seedDemoContracts } from "@/lib/demo";
+import { env } from "@/lib/env";
 import { runWatch, tailContract } from "@/lib/pipeline";
 
 const globalWorker = globalThis as unknown as { __fathomWorker?: boolean };
@@ -11,8 +13,13 @@ async function loop() {
     console.error("[fathom] database is not ready", error instanceof Error ? error.message : error);
   }
   let lastTail = 0;
+  let seeded = false;
   for (;;) {
     try {
+      if (!seeded) {
+        await seedDemoContracts();
+        seeded = true;
+      }
       const job = await claimQueued();
       if (job) {
         console.log(`[fathom] watching ${job.chainId}:${job.address}`);
@@ -21,7 +28,9 @@ async function loop() {
       }
       if (Date.now() - lastTail > 15_000) {
         lastTail = Date.now();
+        const tailCap = env().maxLogs * 4;
         for (const contract of await listReady()) {
+          if (contract.logsIndexed >= tailCap) continue;
           try {
             await tailContract(contract);
           } catch (error) {

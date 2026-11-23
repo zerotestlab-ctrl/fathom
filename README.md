@@ -74,6 +74,10 @@ docker compose up --build
 
 Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
+`SEED_DEMO=true` (the Compose default) queues WETH, the unverified mainnet contract, the Aave V3 Pool proxy, and USDC on Base when those addresses are not already watched. Set `SEED_DEMO=false` to skip that.
+
+A public URL for judges is a Render Blueprint. The steps, the account you need, and the free-tier limits are in [DEPLOY.md](DEPLOY.md).
+
 Compose puts the app and Postgres on the host network so they meet on `127.0.0.1`. That stays up in nested Docker, where the default bridge often drops traffic between containers. On Docker Desktop, if host networking is unavailable, remove both `network_mode: host` lines, publish `5432:5432` on Postgres and `43123:43123` on the app, and set `DATABASE_URL` to `postgresql://fathom:fathom@postgres:5432/fathom`.
 
 Without Compose, from this directory:
